@@ -1,5 +1,7 @@
 package pl.coderslab;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,6 +15,10 @@ public class DbUtil {
 
     public static Connection connection() throws SQLException {
         return DriverManager.getConnection(DB_URL1+DB_NAME+DB_URL2, DB_USER, DB_PASS);
+    }
+
+    public static String hashPassword(String password) {
+        return BCrypt.hashpw(password,BCrypt.gensalt());
     }
 }
 

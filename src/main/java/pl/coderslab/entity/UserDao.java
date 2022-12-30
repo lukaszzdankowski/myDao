@@ -14,7 +14,7 @@ public class UserDao {
     private static final String READ_USER_QUERY =
             "SELECT * FROM users WHERE id = ?";
     private static final String UPDATE_USER_QUERY =
-            "UPDATE users SET email = ?, username = ?, password = ? WHERE id = ?";
+            "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
     private static final String DELETE_USER_QUERY =
             "DELETE FROM users WHERE id = ?";
     private static final String FIND_ALL_USER_QUERY =
@@ -70,8 +70,8 @@ public class UserDao {
         try (Connection conn = DbUtil.connection()) {
 
             PreparedStatement prepStat = conn.prepareStatement(UPDATE_USER_QUERY);
-            prepStat.setString(1, user.getEmail());
-            prepStat.setString(2, user.getUserName());
+            prepStat.setString(1, user.getUserName());
+            prepStat.setString(2, user.getEmail());
             prepStat.setString(3, DbUtil.hashPassword(user.getPassword()));
             prepStat.setInt(4, user.getId());
             prepStat.executeUpdate();
@@ -96,23 +96,23 @@ public class UserDao {
     }
 
     public static User[] findAll() {
-        User[] users = new User[0];
         try (Connection conn = DbUtil.connection()) {
 
+            User[] users = new User[0];
             PreparedStatement prepStat = conn.prepareStatement(FIND_ALL_USER_QUERY);
             ResultSet rs = prepStat.executeQuery();
-
             while (rs.next()) {
-                User user = new User(rs.getInt("id"),rs.getString("username"),
-                        rs.getString("email"),rs.getString("password"));
-                users = addToUsers(users,user);
+                User user = new User(rs.getInt("id"), rs.getString("username"),
+                        rs.getString("email"), rs.getString("password"));
+                users = addToUsers(users, user);
             }
+            return users;
 
         } catch (SQLException e) {
             System.out.println("ERROR in UserDao.findAll");
             e.printStackTrace();
+            return null;
         }
-        return users;
     }
 
     private static User[] addToUsers(User[] users, User user) {
